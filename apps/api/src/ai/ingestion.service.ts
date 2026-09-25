@@ -41,19 +41,43 @@ export class IngestionService {
 
   async searchChunks(
     queryEmbedding: number[],
-    matchThreshold = 0.7,
+    matchThreshold = 0.1,
     matchCount = 5,
   ) {
-    const { data, error } = await this.supabase.client.rpc(
-      'match_document_chunks',
-      {
-        query_embedding: JSON.stringify(queryEmbedding),
-        match_threshold: matchThreshold,
-        match_count: matchCount,
-      },
-    );
+    // Fetch all chunks with embeddings
+    const { data, error } = await this.supabase.client
+      .from('document_chunks')
+      .select('id, document_id, content, chunk_index, embedding')
+      .not('embedding', 'is', null);
 
     if (error) throw error;
-    return data ?? [];
+    if (!data || data.length === 0) return [];
+
+    // Compute cosine similarity in JS
+    const cosineSimilarity = (a: number[], b: number[]): number => {
+      let dot = 0, normA = 0, normB = 0;
+      for (let i = 0; i < a.length; i++) {
+        dot += a[i] * b[i];
+        normA += a[i] * a[i];
+        normB += b[i] * b[i];
+      }
+      return dot / (Math.sqrt(normA) * Math.sqrt(normB));
+    };
+
+    const results = data
+      .map((chunk: any) => {
+        const embedding = typeof chunk.embedding === 'string'
+          ? JSON.parse(chunk.embedding)
+          : Array.isArray(chunk.embedding)
+            ? chunk.embedding
+            : Object.values(chunk.embedding);
+        const similarity = cosineSimilarity(queryEmbedding, embedding);
+        return { ...chunk, similarity };
+      })
+      .filter((c: any) => c.similarity > matchThreshold)
+      .sort((a: any, b: any) => b.similarity - a.similarity)
+      .slice(0, matchCount);
+
+    return results;
   }
 }

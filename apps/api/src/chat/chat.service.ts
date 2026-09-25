@@ -22,9 +22,8 @@ export class ChatService {
     const queryEmbedding = await this.ai.embed(request.message);
 
     // 2. Find relevant chunks
-    const rawChunks = await this.ingestion.searchChunks(queryEmbedding, 0.7, 5);
-
-    const sources: DocumentChunk[] = rawChunks.map((c: any) => ({
+    const rawChunks = await this.ingestion.searchChunks(queryEmbedding, 0.1, 5);
+const sources: DocumentChunk[] = rawChunks.map((c: any) => ({
       id: c.id,
       documentId: c.document_id,
       content: c.content,
