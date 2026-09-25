@@ -41,14 +41,21 @@ export class IngestionService {
 
   async searchChunks(
     queryEmbedding: number[],
-    matchThreshold = 0.1,
+    matchThreshold = 0.5,
     matchCount = 5,
+    userId?: string,
   ) {
-    // Fetch all chunks with embeddings
-    const { data, error } = await this.supabase.client
+    // Fetch only this user's chunks (join via documents table)
+    let query = this.supabase.client
       .from('document_chunks')
-      .select('id, document_id, content, chunk_index, embedding')
+      .select('id, document_id, content, chunk_index, embedding, documents!inner(user_id)')
       .not('embedding', 'is', null);
+
+    if (userId) {
+      query = query.eq('documents.user_id', userId);
+    }
+
+    const { data, error } = await query;
 
     if (error) throw error;
     if (!data || data.length === 0) return [];

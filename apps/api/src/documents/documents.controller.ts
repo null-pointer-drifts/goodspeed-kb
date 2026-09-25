@@ -14,7 +14,7 @@ import {
 import { AuthGuard } from '../auth/auth.guard';
 import { CurrentUser } from '../auth/user.decorator';
 import { DocumentsService } from './documents.service';
-import { CreateDocumentDto, UpdateDocumentDto } from '@goodspeed/types';
+import { CreateDocumentDto, UpdateDocumentDto } from './dto';
 
 @Controller('documents')
 @UseGuards(AuthGuard)

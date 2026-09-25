@@ -17,12 +17,12 @@ export class ChatService {
     private ingestion: IngestionService,
   ) {}
 
-  async chat(request: ChatRequest): Promise<ChatResponse> {
+  async chat(request: ChatRequest, userId: string): Promise<ChatResponse> {
     // 1. Embed the user's query
     const queryEmbedding = await this.ai.embed(request.message);
 
-    // 2. Find relevant chunks
-    const rawChunks = await this.ingestion.searchChunks(queryEmbedding, 0.1, 5);
+    // 2. Find relevant chunks scoped to this user's documents
+    const rawChunks = await this.ingestion.searchChunks(queryEmbedding, 0.5, 5, userId);
 const sources: DocumentChunk[] = rawChunks.map((c: any) => ({
       id: c.id,
       documentId: c.document_id,

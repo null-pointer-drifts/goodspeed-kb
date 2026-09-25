@@ -1,26 +1,38 @@
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { NextResponse, type NextRequest } from 'next/server';
+import { createServerClient } from '@supabase/ssr';
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-
   const isAuthRoute = pathname.startsWith('/login') || pathname.startsWith('/signup');
 
-  // Check for Supabase auth cookie (set by the browser client after login)
-  const cookies = request.cookies.getAll();
-  const hasSession = cookies.some(
-    (c) => c.name.includes('auth-token') && c.value.length > 0,
+  const response = NextResponse.next({ request });
+
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() { return request.cookies.getAll(); },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value, options }) =>
+            response.cookies.set(name, value, options),
+          );
+        },
+      },
+    },
   );
 
-  if (!hasSession && !isAuthRoute) {
+  const { data: { session } } = await supabase.auth.getSession();
+
+  if (!session && !isAuthRoute) {
     return NextResponse.redirect(new URL('/login', request.url));
   }
 
-  if (hasSession && isAuthRoute) {
+  if (session && isAuthRoute) {
     return NextResponse.redirect(new URL('/documents', request.url));
   }
 
-  return NextResponse.next();
+  return response;
 }
 
 export const config = {

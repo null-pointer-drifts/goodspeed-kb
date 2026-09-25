@@ -1,7 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { SupabaseService } from '../supabase/supabase.service';
 import { IngestionService } from '../ai/ingestion.service';
-import { Document, CreateDocumentDto, UpdateDocumentDto } from '@goodspeed/types';
+import { Document } from '@goodspeed/types';
+import { CreateDocumentDto, UpdateDocumentDto } from './dto';
 
 @Injectable()
 export class DocumentsService {
