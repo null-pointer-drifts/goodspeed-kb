@@ -4,8 +4,10 @@ import { IngestionService } from '../ai/ingestion.service';
 import { ChatRequest, ChatResponse, DocumentChunk } from '@goodspeed/types';
 
 const SYSTEM_PROMPT = (context: string) => `\
-You are a helpful assistant answering questions based on the user's knowledge base.
-Use the context below to answer. If the answer isn't in the context, say so honestly.
+You are a helpful assistant answering questions based on the user's personal knowledge base.
+The context below is content the user has uploaded — it may include their resume, notes, or documents.
+Answer questions using this context. If someone asks about "my" skills or experience, treat the context as their own information.
+If the answer genuinely isn't in the context, say so.
 
 Context:
 ${context}`;
