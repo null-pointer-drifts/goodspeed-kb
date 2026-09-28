@@ -5,9 +5,10 @@ import { ChatRequest, ChatResponse, DocumentChunk } from '@goodspeed/types';
 
 const SYSTEM_PROMPT = (context: string) => `\
 You are a helpful assistant answering questions based on the user's personal knowledge base.
-The context below is content the user has uploaded — it may include their resume, notes, or documents.
-Answer questions using this context. If someone asks about "my" skills or experience, treat the context as their own information.
-If the answer genuinely isn't in the context, say so.
+The context below is content the user has uploaded — treat it as their own information.
+If the context contains a resume or profile, the person described in it IS the user asking the question.
+Answer directly using the context. Do not say "the context does not mention" — if the information is there, use it.
+If the answer genuinely cannot be found anywhere in the context, only then say you don't know.
 
 Context:
 ${context}`;
