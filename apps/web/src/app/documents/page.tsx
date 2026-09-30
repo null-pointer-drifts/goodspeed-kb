@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Document } from '@goodspeed/types';
+
 import { api } from '../../lib/api';
 import DocumentForm from '../../components/DocumentForm';
 import DocumentList from '../../components/DocumentList';
@@ -26,6 +27,10 @@ export default function DocumentsPage() {
     setDocuments((prev) => prev.filter((d) => d.id !== id));
   }
 
+  function handleUpdated(doc: Document) {
+    setDocuments((prev) => prev.map((d) => (d.id === doc.id ? doc : d)));
+  }
+
   return (
     <div style={{ maxWidth: 720, margin: '0 auto', padding: '32px 24px', width: '100%' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
@@ -39,7 +44,7 @@ export default function DocumentsPage() {
       {loading && <p style={{ color: 'var(--muted)' }}>Loading...</p>}
       {error && <p style={{ color: 'var(--danger)' }}>{error}</p>}
       {!loading && !error && (
-        <DocumentList documents={documents} onDeleted={handleDeleted} />
+        <DocumentList documents={documents} onDeleted={handleDeleted} onUpdated={handleUpdated} />
       )}
     </div>
   );
