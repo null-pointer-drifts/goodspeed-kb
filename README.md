@@ -2,8 +2,8 @@
 
 A full-stack application that lets you upload documents and chat with them using RAG (Retrieval-Augmented Generation).
 
-**[App Walkthrough — Loom](REPLACE_WITH_LOOM_LINK)**
-**[AI-Assisted Development — Loom](REPLACE_WITH_LOOM_LINK)**
+**[App Walkthrough — Loom](https://www.loom.com/share/0b30acd460724feb97e3ab2ddb9b4f55)**
+**[AI-Assisted Development — Loom](https://www.loom.com/share/4d1a73986ab7448884e7bf3a20adf0d4)**
 
 ## Architecture
 
