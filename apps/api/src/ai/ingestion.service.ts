@@ -39,6 +39,15 @@ export class IngestionService {
     if (error) throw error;
   }
 
+  async deleteChunks(documentId: string): Promise<void> {
+    const { error } = await this.supabase.client
+      .from('document_chunks')
+      .delete()
+      .eq('document_id', documentId);
+
+    if (error) throw error;
+  }
+
   async searchChunks(
     queryEmbedding: number[],
     matchThreshold = 0.5,

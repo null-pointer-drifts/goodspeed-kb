@@ -72,6 +72,9 @@ export class DocumentsService {
   async remove(id: string, userId: string): Promise<void> {
     await this.findOne(id, userId); // ensure exists + owned
 
+    // Delete chunks first
+    await this.ingestion.deleteChunks(id);
+
     const { error } = await this.supabase.client
       .from('documents')
       .delete()
